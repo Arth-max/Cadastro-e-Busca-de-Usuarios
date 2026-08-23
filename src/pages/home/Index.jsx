@@ -6,6 +6,7 @@ import API from '../../hooks/user.js'
 
 function Home() {
   const [users, setUsuario] = useState([])
+  const [block, setBlock] = useState(false)
 
   const inputName = useRef()
   const inputEmail = useRef()
@@ -90,12 +91,35 @@ function Home() {
     }
   }
 
+  function instrucoes() {
+    setBlock(!block);
+  }
+
   useEffect(() => {
     
   },[])
 
   return (
     <div className='App' style={{backgroundImage: `url(${ImgLogin})`}}>
+      <nav>
+        <button onClick={instrucoes}>Como Usar</button>
+      </nav>
+      
+      <div className='instructions' style={{display: block ? 'block' : 'none'}}>
+        <p> Para usar o sistema, basta digitar os dados do usuário 
+          e clicar em cada botão correspondente ao que deseja fazer.</p>
+        <br/>
+        <p> Para <b>Cadastrar um usuário</b>, digite o nome, email e senha e clique no botão "Cadastrar Usuário".</p>
+        <br/>
+        <p> Para <b>buscar um usuário</b> já cadastrado, digite apenas o email dele e clique no botão "Buscar Usuário".
+          O sistema fará a busca e um card com os dados do usuário será apresentado .</p>
+        <br/>
+        <p> Para <b>atualizar um usuário</b> digite o id correspondente a ele, e preencha os campos que deseja alterar 
+          (email, nome ou senha) e clique no botão "Atualizar Usuário".</p>
+        <br/>
+        <p> Para <b>deletar um usuário</b>, busque-o primeiro e clique no botão com ícone de lixeria ao lado das informações.</p>
+      </div>
+
       <form>
         <h1>Cadastro de Usuários</h1>
         <input name="name" type="text" placeholder='Nome' ref={inputName}/>
