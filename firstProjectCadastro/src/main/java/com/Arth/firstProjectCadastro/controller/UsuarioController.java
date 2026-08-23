@@ -1,0 +1,49 @@
+package com.Arth.firstProjectCadastro.controller;
+
+import com.Arth.firstProjectCadastro.business.UsuarioService;
+import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequestMapping("/usuario")
+@RequiredArgsConstructor
+@CrossOrigin
+public class UsuarioController {
+
+    private final UsuarioService usuarioService;
+
+    @PostMapping
+    public ResponseEntity<Void> salvarUsuario(@RequestBody User usuario) {
+        if (usuario == null) {
+            return ResponseEntity.noContent().build();
+        } else {
+            usuarioService.salvarUsuario(usuario);
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<User> buscarUsuarioPorEMAIL(@RequestParam String email) {
+        User usuario = usuarioService.buscarUsuarioPorEMAIL(email);
+
+        if (email == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deletarUsuarioPorEmail(@RequestParam String email) {
+        usuarioService.deletarUsuarioPorEmail(email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> atualizarUsuarioPorID(@RequestParam Integer Id, @RequestBody User usuario) {
+        usuarioService.atualizarUsuarioPorID(Id, usuario);
+        return ResponseEntity.ok().build();
+    }
+}
