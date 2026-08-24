@@ -100,6 +100,13 @@ function Home() {
     }
   }
 
+  //função para retirar o card do usuário da tela
+  function RmvCardUser() {
+    const email = inputEmail.current.value
+    setUsuario(PrevUsers => PrevUsers.filter(user => user.email !== email))
+  }
+
+  //função para ativar o menu de instruções
   function instrucoes() {
     setBlock(!block);
   }
@@ -141,7 +148,7 @@ function Home() {
       </form>
 
       {users?.map(user => (
-        <div key={user.id} className='cards'>
+        <div onClick={RmvCardUser} key={user.id} className='cards'>
           <div>
             <p>Nome: <span>{user.nome}</span></p>
             <p>Email: <span>{user.email}</span></p>
