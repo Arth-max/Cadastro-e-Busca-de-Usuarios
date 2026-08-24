@@ -5,8 +5,8 @@ import { useState, useRef, useEffect } from 'react'
 import API from '../../hooks/user.js'
 
 function Home() {
-  const [users, setUsuario] = useState([])
-  const [block, setBlock] = useState(false)
+  const [users, setUsuario] = useState([]) //estado do usuário
+  const [block, setBlock] = useState(false) //estado do menu de instruções
 
   const inputName = useRef()
   const inputEmail = useRef()
@@ -17,6 +17,11 @@ function Home() {
   async function findUsers() {
     try {
       const email = inputEmail.current.value
+
+      if (email == '') {
+        console.log("Usuário nao encontrado, Por favor digite o email do mesmo")
+        return
+      }
       const userFromAPI = await API.get('/usuario?email=' + email)
       setUsuario([userFromAPI.data])
     } catch (error) {
@@ -27,17 +32,17 @@ function Home() {
   //função criar usuários pela API
   async function createUsers() {
     try {
+       if (inputName.current.value === '' || inputEmail.current.value === '' || inputSenha.current.value === '') {
+        console.log("Usuário nao cadastrado, Por favor digite todos os campos")
+        return
+      }
+
       await API.post('/usuario', {
         nome: inputName.current.value,
         email: inputEmail.current.value,
         senha: inputSenha.current.value
-    })
-      if (inputName.current.value === '' || inputEmail.current.value === '' || inputSenha.current.value === '') {
-        console.log("Usuário nao cadastrado, Por favor digite todos os campos")
-        return
-      } else {
-        console.log("Usuário cadastrado com sucesso!")
-      }
+      })
+      console.log("Usuário cadastrado com sucesso!")
 
       inputName.current.value = ''
       inputEmail.current.value = ''
@@ -52,6 +57,10 @@ function Home() {
     const id = inputID.current.value
     const dados = {}
 
+    if (id === '') {
+      console.log("Usuário nao atualizado, Por favor digite o ID do mesmo")
+      return
+    }
     try {
       if (inputName.current.value != "") { //verifica se o inputName não está vazio
         dados.nome = inputName.current.value
