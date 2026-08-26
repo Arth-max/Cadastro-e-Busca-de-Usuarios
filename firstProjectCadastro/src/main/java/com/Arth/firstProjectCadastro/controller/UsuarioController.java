@@ -26,12 +26,9 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<User> buscarUsuarioPorEMAIL(@RequestParam String email) {
-        User usuario = usuarioService.buscarUsuarioPorEMAIL(email);
+    public ResponseEntity<User> buscarUsuario(@RequestParam String email, String senha, String nome) {
+        User usuario = usuarioService.buscarUsuario(email, senha, nome);
 
-        if (email == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(usuario);
     }
 
