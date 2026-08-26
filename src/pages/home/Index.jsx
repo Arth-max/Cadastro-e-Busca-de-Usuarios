@@ -6,49 +6,56 @@ import API from '../../hooks/user.js'
 
 function Home() {
   const [users, setUsuario] = useState([]) //estado do usuário
-  const [block, setBlock] = useState(false) //estado do menu de instruções
+  const [tela, setTela] = useState('login')
 
   const inputName = useRef()
   const inputEmail = useRef()
   const inputSenha = useRef()
-  const inputID = useRef()
+
+  const CinputName = useRef()
+  const CinputEmail = useRef()
+  const CinputSenha = useRef()
 
   //função buscar usuários pela API
   async function findUsers() {
     try {
       const email = inputEmail.current.value
+      const nome = inputName.current.value
+      const senha = inputSenha.current.value
 
-      if (email == '') {
-        console.log("Usuário nao encontrado, Por favor digite o email do mesmo")
+      if (email == '' || nome == '' || senha == '') {
+        alert("Usuário nao encontrado, Por favor digite todos os campos")
         return
       }
-      const userFromAPI = await API.get('/usuario?email=' + email)
+
+      const userFromAPI = await API.get('/usuario?email=' + email + "&senha=" + senha + "&nome=" + nome) 
       setUsuario([userFromAPI.data])
     } catch (error) {
-        console.log("Usuário nao encontrado" + error)
+        console.log("Por favor, revise se todos os campos estão corretos" + error)
     }
+      alert("validado com sucesso")
   }
 
   //função criar usuários pela API
   async function createUsers() {
     try {
-       if (inputName.current.value === '' || inputEmail.current.value === '' || inputSenha.current.value === '') {
-        console.log("Usuário nao cadastrado, Por favor digite todos os campos")
+       if (CinputName.current.value === '' || CinputEmail.current.value === '' || CinputSenha.current.value === '') {
+        alert("Usuário nao cadastrado, Por favor digite todos os campos")
         return
       }
 
       await API.post('/usuario', {
-        nome: inputName.current.value,
-        email: inputEmail.current.value,
-        senha: inputSenha.current.value
+        nome: CinputName.current.value,
+        email: CinputEmail.current.value,
+        senha: CinputSenha.current.value
       })
-      console.log("Usuário cadastrado com sucesso!")
+      alert("Usuário cadastrado com sucesso!")
 
-      inputName.current.value = ''
-      inputEmail.current.value = ''
-      inputSenha.current.value = ''
+      CinputName.current.value = ''
+      CinputEmail.current.value = ''
+      CinputSenha.current.value = ''
     } catch (error) {
-        console.log("Usuário nao cadastrado" + error)
+        alert("Usuário nao cadastrado" + error)
     }
   }
   
@@ -100,15 +107,16 @@ function Home() {
     }
   }
 
-  //função para retirar o card do usuário da tela
-  function RmvCardUser() {
-    const email = inputEmail.current.value
-    setUsuario(PrevUsers => PrevUsers.filter(user => user.email !== email))
+  async function forgotPassword() {
+    
+  } 
+
+  function telaLogin() {
+    setTela('login')
   }
 
-  //função para ativar o menu de instruções
-  function instrucoes() {
-    setBlock(!block);
+  function telaCadastro() {
+    setTela('cadastro')
   }
 
   useEffect(() => {
@@ -117,34 +125,28 @@ function Home() {
 
   return (
     <div className='App' style={{backgroundImage: `url(${ImgLogin})`}}>
-      <nav>
-        <button onClick={instrucoes}>Como Usar</button>
-      </nav>
       
-      <div className='instructions' style={{display: block ? 'block' : 'none'}}>
-        <p> Para usar o sistema, basta digitar os dados do usuário 
-          e clicar em cada botão correspondente ao que deseja fazer.</p>
-        <br/>
-        <p> Para <b>Cadastrar um usuário</b>, digite o nome, email e senha e clique no botão "Cadastrar Usuário".</p>
-        <br/>
-        <p> Para <b>buscar um usuário</b> já cadastrado, digite apenas o email dele e clique no botão "Buscar Usuário".
-          O sistema fará a busca e um card com os dados do usuário será apresentado .</p>
-        <br/>
-        <p> Para <b>atualizar um usuário</b> digite o id correspondente a ele, e preencha os campos que deseja alterar 
-          (email, nome ou senha) e clique no botão "Atualizar Usuário".</p>
-        <br/>
-        <p> Para <b>deletar um usuário</b>, busque-o primeiro e clique no botão com ícone de lixeria ao lado das informações.</p>
-      </div>
+      <div className='botoes'>
+          <button className='botoesPrincipais' onClick={telaLogin}>Fazer Login</button>
+          <br/>
+          <button className='botoesPrincipais' onClick={telaCadastro}>Criar Conta</button>
+        </div>
 
-      <form>
-        <h1>Cadastro de Usuários</h1>
+      <form className='form1' style={{display: tela === 'login' ? 'flex' : 'none'}}>
+        <h1>Login</h1>
         <input name="name" type="text" placeholder='Nome' ref={inputName}/>
         <input name="Email" type="email" placeholder='Email' ref={inputEmail}/>
         <input name="senha" type="password" placeholder='Senha' ref={inputSenha}/>
-        <input id="IDinput" className="idQuestion" type="number" placeholder='Id' ref={inputID}/>
-        <button type="button" onClick={createUsers}>Cadastrar Usuário</button>
-        <button type="button" onClick={findUsers}>Buscar Usuário</button>
-        <button type="button" onClick={updateUsers}>Atualizar Usuário</button>
+        <button type="button" onClick={findUsers}>Entrar</button>
+        <button type="button" onClick={forgotPassword}>Esqueci minha senha</button>
+      </form>
+
+       <form className='form2' style={{display: tela === 'cadastro' ? 'flex' : 'none'}}> 
+        <h1>Cadastro</h1>
+        <input name="name" type="text" placeholder='Nome' ref={CinputName}/>
+        <input name="Email" type="email" placeholder='Email' ref={CinputEmail}/>
+        <input name="senha" type="password" placeholder='Senha' ref={CinputSenha}/>
+        <button type="button" onClick={createUsers}>Cadastrar</button>
       </form>
 
       {users?.map(user => (
