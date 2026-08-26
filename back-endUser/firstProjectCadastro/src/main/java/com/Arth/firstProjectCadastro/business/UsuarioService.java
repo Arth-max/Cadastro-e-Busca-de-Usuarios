@@ -4,6 +4,8 @@ import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
 import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+
 @Service
 public class UsuarioService {
     private final UsuarioRepository repository;
@@ -16,9 +18,9 @@ public class UsuarioService {
         repository.saveAndFlush(usuario);
     }
 
-    public User buscarUsuarioPorEMAIL(String email) {
-        return repository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Email não encontrado")
+    public User buscarUsuario(String email, String senha, String nome) {
+        return repository.findByEmailSenhaNome(email, senha, nome).orElseThrow(
+                    () -> new RuntimeException("Usuario não encontrado")
         );
     }
 
