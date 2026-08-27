@@ -4,23 +4,26 @@ import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
 import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 
 @Service
 public class UsuarioService {
     private final UsuarioRepository repository;
 
-    public UsuarioService(UsuarioRepository repository) {
+    private final EmailService emailService;
+
+    public UsuarioService(UsuarioRepository repository, EmailService emailService) {
+        this.emailService = emailService;
         this.repository = repository;
     }
 
     public void salvarUsuario(User usuario) {
         repository.saveAndFlush(usuario);
+        emailService.enviarEmail(usuario.getEmail(), "Você foi cadastrado no site", "Você está recebendo uma mensagem de confirmação de cadastro");
     }
 
     public User buscarUsuario(String email, String senha, String nome) {
-        return repository.findByEmailSenhaNome(email, senha, nome).orElseThrow(
-                    () -> new RuntimeException("Usuario não encontrado")
+        return repository.findByEmailAndSenhaAndNome(email, senha, nome).orElseThrow(
+                () -> new RuntimeException("Usuario não encontrado")
         );
     }
 
@@ -36,10 +39,10 @@ public class UsuarioService {
             usuarioEntity.setNome(usuario.getNome());
         }
         if (usuario.getEmail() != null) {
-            usuarioEntity.setNome(usuario.getEmail());
+            usuarioEntity.setEmail(usuario.getEmail());
         }
         if (usuario.getSenha() != null) {
-            usuarioEntity.setNome(usuario.getSenha());
+            usuarioEntity.setSenha(usuario.getSenha());
         }
 
         repository.saveAndFlush(usuarioEntity);
