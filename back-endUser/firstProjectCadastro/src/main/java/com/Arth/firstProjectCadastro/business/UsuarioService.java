@@ -1,10 +1,10 @@
 package com.Arth.firstProjectCadastro.business;
 
-import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
-import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
+import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
+import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
+
 
 @Service
 public class UsuarioService {
@@ -36,10 +36,10 @@ public class UsuarioService {
             usuarioEntity.setNome(usuario.getNome());
         }
         if (usuario.getEmail() != null) {
-            usuarioEntity.setNome(usuario.getEmail());
+            usuarioEntity.setEmail(usuario.getEmail());
         }
         if (usuario.getSenha() != null) {
-            usuarioEntity.setNome(usuario.getSenha());
+            usuarioEntity.setSenha(usuario.getSenha());
         }
 
         repository.saveAndFlush(usuarioEntity);
