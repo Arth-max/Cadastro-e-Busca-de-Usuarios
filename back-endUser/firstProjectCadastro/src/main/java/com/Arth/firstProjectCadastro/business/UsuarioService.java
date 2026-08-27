@@ -19,7 +19,7 @@ public class UsuarioService {
     }
 
     public User buscarUsuario(String email, String senha, String nome) {
-        return repository.findByEmailSenhaNome(email, senha, nome).orElseThrow(
+        return repository.findByEmailAndSenhaAndNome(email, senha, nome).orElseThrow(
                     () -> new RuntimeException("Usuario não encontrado")
         );
     }

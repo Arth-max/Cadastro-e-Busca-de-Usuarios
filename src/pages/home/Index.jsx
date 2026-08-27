@@ -8,13 +8,32 @@ function Home() {
   const [users, setUsuario] = useState([]) //estado do usuário
   const [tela, setTela] = useState('login')
 
+  //login
   const inputName = useRef()
   const inputEmail = useRef()
   const inputSenha = useRef()
 
+  //cadastro
   const CinputName = useRef()
   const CinputEmail = useRef()
   const CinputSenha = useRef()
+
+  //esqueci senha
+  const codigo = useRef()
+  const NinputSenha = useRef()
+
+  //ativar tela login
+  function telaLogin() {
+    setTela('login')
+  }
+  //ativar tela cadastro
+  function telaCadastro() {
+    setTela('cadastro')
+  }
+  //ativar tela esqueci senha
+  function forgotPassword() {
+    setTela('esqueciSenha')
+  }
 
   //função buscar usuários pela API
   async function findUsers() {
@@ -28,12 +47,15 @@ function Home() {
         return
       }
 
-      const userFromAPI = await API.get('/usuario?email=' + email + "&senha=" + senha + "&nome=" + nome) 
-      setUsuario([userFromAPI.data])
+      await API.get('/usuario?email=' + email + "&senha=" + senha + "&nome=" + nome)
+      alert("validado com sucesso") 
+
+      inputName.current.value = ''
+      inputEmail.current.value = ''
+      inputSenha.current.value = ''
     } catch (error) {
-        console.log("Por favor, revise se todos os campos estão corretos" + error)
+        alert("Por favor, revise se todos os campos estão corretos\n" + error)
     }
-      alert("validado com sucesso")
   }
 
   //função criar usuários pela API
@@ -107,18 +129,6 @@ function Home() {
     }
   }
 
-  async function forgotPassword() {
-    
-  } 
-
-  function telaLogin() {
-    setTela('login')
-  }
-
-  function telaCadastro() {
-    setTela('cadastro')
-  }
-
   useEffect(() => {
     
   },[])
@@ -139,14 +149,22 @@ function Home() {
         <input name="senha" type="password" placeholder='Senha' ref={inputSenha}/>
         <button type="button" onClick={findUsers}>Entrar</button>
         <button type="button" onClick={forgotPassword}>Esqueci minha senha</button>
+        <a href="../src/tela.html">Esqueci minha senha</a>
       </form>
 
-       <form className='form2' style={{display: tela === 'cadastro' ? 'flex' : 'none'}}> 
+      <form className='form2' style={{display: tela === 'cadastro' ? 'flex' : 'none'}}> 
         <h1>Cadastro</h1>
         <input name="name" type="text" placeholder='Nome' ref={CinputName}/>
         <input name="Email" type="email" placeholder='Email' ref={CinputEmail}/>
         <input name="senha" type="password" placeholder='Senha' ref={CinputSenha}/>
         <button type="button" onClick={createUsers}>Cadastrar</button>
+      </form>
+
+      <form className='form1' style={{display: tela === 'esqueciSenha' ? 'flex' : 'none'}}> 
+        <h1>Cadastro</h1>
+        <input name="Email" type="email" placeholder='Digite seu Email' ref={CinputEmail}/>
+        <button type="button" onClick={updateUsers}>Enviar</button>
+        <button type="button" onClick={telaLogin}>Voltar</button>
       </form>
 
       {users?.map(user => (
@@ -163,5 +181,4 @@ function Home() {
     </div>
   )
 }
-
 export default Home
