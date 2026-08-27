@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
 import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
 
-
 @Service
 public class UsuarioService {
     private final UsuarioRepository repository;
