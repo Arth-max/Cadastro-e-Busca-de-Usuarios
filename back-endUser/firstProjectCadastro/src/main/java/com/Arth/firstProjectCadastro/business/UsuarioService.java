@@ -40,20 +40,27 @@ public class UsuarioService {
         repository.deleteByEmail(email);
     }
 
-    public String atualizarUsuario(String email, int cod, User usuario) {
+    public void atualizarSenha(String email, int cod, User usuario) {
         if (cod == Codigo) {
             User usuarioEntity = repository.findByEmail(email).orElseThrow(
                     () -> new RuntimeException("Usuario não encontrado")
             );
-            usuario.setNome(usuario.getNome());
-            usuario.setSenha(usuario.getSenha());
             if (usuario.getNome() != null) { usuarioEntity.setNome(usuario.getNome()); }
             if (usuario.getEmail() != null) { usuarioEntity.setEmail(usuario.getEmail()); }
             if (usuario.getSenha() != null) { usuarioEntity.setSenha(usuario.getSenha()); }
-            repository.saveAndFlush(usuarioEntity);
-            return "Usuario atualizado";
-        } else {
-            return "código errado ou expirado";
+            usuario.setSenha(usuario.getSenha());
         }
+    }
+
+    public void atualizarUsuario(String email, User usuario) {
+        User usuarioEntity = repository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Usuario não encontrado")
+        );
+        usuario.setNome(usuario.getNome());
+        usuario.setEmail(usuario.getEmail());
+        if (usuario.getNome() != null) { usuarioEntity.setNome(usuario.getNome()); }
+        if (usuario.getEmail() != null) { usuarioEntity.setEmail(usuario.getEmail()); }
+        if (usuario.getSenha() != null) { usuarioEntity.setSenha(usuario.getSenha()); }
+        repository.saveAndFlush(usuarioEntity);
     }
 }
