@@ -4,12 +4,19 @@ import org.springframework.stereotype.Service;
 
 import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
 import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.Random;
+
 
 @Service
 public class UsuarioService {
     private final UsuarioRepository repository;
+    private int Codigo;
+    private final EmailService emailService;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioService(UsuarioRepository repository, EmailService emailService) {
+        this.emailService = emailService;
         this.repository = repository;
     }
 
@@ -23,24 +30,30 @@ public class UsuarioService {
         );
     }
 
+    public void recuperarSenhaEmail(String email) {
+        Random cod = new Random();
+        this.Codigo = cod.nextInt(100000);
+        emailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + " digite este código no site para continuar operação");
+    }
+
     public void deletarUsuarioPorEmail(String email) {
         repository.deleteByEmail(email);
     }
 
-    public void atualizarUsuarioPorID(Integer ID, User usuario) {
-        User usuarioEntity = repository.findById(ID).orElseThrow(
-                () -> new RuntimeException("Usuario não encontrado")
-        );
-        if (usuario.getNome() != null) {
-            usuarioEntity.setNome(usuario.getNome());
+    public String atualizarUsuario(String email, int cod, User usuario) {
+        if (cod == Codigo) {
+            User usuarioEntity = repository.findByEmail(email).orElseThrow(
+                    () -> new RuntimeException("Usuario não encontrado")
+            );
+            usuario.setNome(usuario.getNome());
+            usuario.setSenha(usuario.getSenha());
+            if (usuario.getNome() != null) { usuarioEntity.setNome(usuario.getNome()); }
+            if (usuario.getEmail() != null) { usuarioEntity.setEmail(usuario.getEmail()); }
+            if (usuario.getSenha() != null) { usuarioEntity.setSenha(usuario.getSenha()); }
+            repository.saveAndFlush(usuarioEntity);
+            return "Usuario atualizado";
+        } else {
+            return "código errado ou expirado";
         }
-        if (usuario.getEmail() != null) {
-            usuarioEntity.setEmail(usuario.getEmail());
-        }
-        if (usuario.getSenha() != null) {
-            usuarioEntity.setSenha(usuario.getSenha());
-        }
-
-        repository.saveAndFlush(usuarioEntity);
     }
 }
