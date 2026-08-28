@@ -29,8 +29,12 @@ public class UsuarioService {
     }
 
     public void recuperarSenhaEmail(String email) {
-        Random cod = new Random();
-        this.Codigo = cod.nextInt(100000);
+        User usuario = repository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("email não encontrado")
+        );
+        int cod = new Random().nextInt(900000) + 100000;
+        usuario.setCodigoRecuperacao(cod);
+        repository.saveAndFlush(usuario);
         EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + "\nDigite este código no site para continuar operação");
     }
 
@@ -39,23 +43,22 @@ public class UsuarioService {
     }
 
     public void atualizarSenha(String email, int cod, User usuario) {
-        if (cod == Codigo) {
-            User usuarioEntity = repository.findByEmail(email).orElseThrow(
+        User usuarioEntity = repository.findByEmail(email).orElseThrow(
                     () -> new RuntimeException("Usuario não encontrado")
-            );
-            if (usuario.getNome() != null) { usuarioEntity.setNome(usuario.getNome()); }
-            if (usuario.getEmail() != null) { usuarioEntity.setEmail(usuario.getEmail()); }
-            if (usuario.getSenha() != null) { usuarioEntity.setSenha(usuario.getSenha()); }
-            usuario.setSenha(usuario.getSenha());
-        }
+        );
+            if (usuarioEntity.getCodigoRecuperacao() != null && usuarioEntity.getCodigoRecuperacao() == cod) {
+                if (usuario.getSenha() != null) { usuarioEntity.setSenha(usuario.getSenha()); }
+                usuarioEntity.setCodigoRecuperacao(null);
+                repository.saveAndFlush(usuarioEntity);
+            } else {
+                throw new RuntimeException("Código inválido");
+            }
     }
 
     public void atualizarUsuario(String email, User usuario) {
         User usuarioEntity = repository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("Usuario não encontrado")
         );
-        usuario.setNome(usuario.getNome());
-        usuario.setEmail(usuario.getEmail());
         if (usuario.getNome() != null) { usuarioEntity.setNome(usuario.getNome()); }
         if (usuario.getEmail() != null) { usuarioEntity.setEmail(usuario.getEmail()); }
         if (usuario.getSenha() != null) { usuarioEntity.setSenha(usuario.getSenha()); }
