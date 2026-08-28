@@ -25,11 +25,8 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<Void> recuperarSenhaEmail(@RequestParam String email, @RequestBody User usuario) {
-        if (usuario == null) {
-            return ResponseEntity.noContent().build();
-        }
+    @PostMapping("/recuperar-senha")
+    public ResponseEntity<Void> recuperarSenhaEmail(@RequestParam String email) {
         usuarioService.recuperarSenhaEmail(email);
         return ResponseEntity.ok().build();
     }

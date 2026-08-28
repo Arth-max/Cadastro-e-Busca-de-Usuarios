@@ -31,7 +31,7 @@ public class UsuarioService {
     public void recuperarSenhaEmail(String email) {
         Random cod = new Random();
         this.Codigo = cod.nextInt(100000);
-        EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + " digite este código no site para continuar operação");
+        EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + "\nDigite este código no site para continuar operação");
     }
 
     public void deletarUsuarioPorEmail(String email) {
