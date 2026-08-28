@@ -13,10 +13,10 @@ import java.util.Random;
 public class UsuarioService {
     private final UsuarioRepository repository;
     private int Codigo;
-    private final EmailService emailService;
+    private final emailService EmailService;
 
-    public UsuarioService(UsuarioRepository repository, EmailService emailService) {
-        this.emailService = emailService;
+    public UsuarioService(UsuarioRepository repository, emailService EmailService) {
+        this.EmailService = EmailService;
         this.repository = repository;
     }
 
@@ -33,7 +33,7 @@ public class UsuarioService {
     public void recuperarSenhaEmail(String email) {
         Random cod = new Random();
         this.Codigo = cod.nextInt(100000);
-        emailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + " digite este código no site para continuar operação");
+        EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + " digite este código no site para continuar operação");
     }
 
     public void deletarUsuarioPorEmail(String email) {
