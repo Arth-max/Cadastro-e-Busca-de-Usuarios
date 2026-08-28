@@ -26,4 +26,6 @@ public class User {
 
     @Column(name = "senha")
     private String senha;
+
+    private Integer codigoRecuperacao;
 }
