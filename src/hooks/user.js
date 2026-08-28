@@ -7,10 +7,10 @@ const API = axios.create({
 export async function setEmail() {
     let email = document.getElementById('mail').value;
     if (email !== '') {
-        document.getElementById('codigo').style.display = 'block';
-        document.getElementById('Nsenha').style.display = 'block';
+        document.getElementById('codigo').style.display = 'block'
+        document.getElementById('Nsenha').style.display = 'block'
     }
-    await API.get('/usuario?email=' + email)
+    await API.get('/usuario/recuperar-senha?email=' + email)
     alert("Um código foi enviado para o seu email, por favor verifique sua caixa de entrada")
 }
 
