@@ -10,7 +10,7 @@ export async function setEmail() {
         document.getElementById('codigo').style.display = 'block'
         document.getElementById('Nsenha').style.display = 'block'
     }
-    await API.get('/usuario/recuperar-senha?email=' + email)
+    await API.post('/usuario/recuperar-senha?email=' + email)
     alert("Um código foi enviado para o seu email, por favor verifique sua caixa de entrada")
 }
 

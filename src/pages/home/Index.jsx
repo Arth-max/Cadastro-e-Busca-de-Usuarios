@@ -85,29 +85,25 @@ function Home() {
   }
   
   //função atualizar usuários pela API
-  async function updateUsers() {
-    const email = inputEmail.current.value
+  async function updatePassUsers() {
+    const email = Email.current.value
     const cod = codigo.current.value
-    
-    const dados = {}
+    const Nsenha = NinputSenha.current.value
 
     if (cod === '') {
-      console.log("Usuário nao atualizado, Por favor digite o ID do mesmo")
+      console.log("Usuário nao atualizado, Por favor digite o codigo")
       return
     }
     try {
-      if (NinputName.current.value != "") { //verifica se o inputName não está vazio
-        dados.nome = inputName.current.value
-      }
-      if (NinputSenha.current.value != "") { // verifica se o inputSenha não está vazio
-        dados.senha = inputSenha.current.value
+      if (Nsenha == "") { // verifica se o inputSenha não está vazio
+        alert("Por favor digite uma nova senha para continuar")
       } 
 
-      await API.put(`/usuario?email=${email}&cod=${cod}`, dados)
+      await API.put(`/usuario/atualizarSenha?email=${email}&cod=${cod}`, {senha: Nsenha})
       
-      inputName.current.value = ''
       Email.current.value = ''
-      inputSenha.current.value = ''
+      codigo.current.value = ''
+      NinputSenha.current.value = ''
 
       alert("Usuário atualizado com sucesso!")
 
@@ -167,7 +163,7 @@ function Home() {
         <input id='codigo' className='beforeCodigo' type="number" placeholder='Digite o código enviado pelo email' ref={codigo}/>
         <input id='Nsenha' className='afterCodigo' type="password" placeholder='Digite sua nova senha' ref={NinputSenha}/>
         <button type="button" onClick={setEmail}>Enviar</button>
-        <button type="button" onClick={updateUsers}>Atualizar Senha</button>
+        <button type="button" onClick={updatePassUsers}>Atualizar Senha</button>
         <button type="button" onClick={telaLogin}>Voltar</button>
       </form>
 
