@@ -26,11 +26,21 @@ public class UsuarioController {
     }
 
     @GetMapping
+    public ResponseEntity<Void> recuperarSenhaEmail(@RequestParam String email, @RequestBody User usuario) {
+        if (usuario == null) {
+            return ResponseEntity.noContent().build();
+        }
+        usuarioService.recuperarSenhaEmail(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
     public ResponseEntity<User> buscarUsuario(@RequestParam String email, String senha, String nome) {
         User usuario = usuarioService.buscarUsuario(email, senha, nome);
 
         return ResponseEntity.ok(usuario);
     }
+
 
     @DeleteMapping
     public ResponseEntity<Void> deletarUsuarioPorEmail(@RequestParam String email) {
@@ -39,8 +49,8 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> atualizarUsuarioPorID(@RequestParam Integer Id, @RequestBody User usuario) {
-        usuarioService.atualizarUsuarioPorID(Id, usuario);
+    public ResponseEntity<Void> atualizarUsuario(@RequestParam String email, @RequestParam int cod, @RequestBody User usuario) {
+        usuarioService.atualizarUsuario(email, cod, usuario);
         return ResponseEntity.ok().build();
     }
 }

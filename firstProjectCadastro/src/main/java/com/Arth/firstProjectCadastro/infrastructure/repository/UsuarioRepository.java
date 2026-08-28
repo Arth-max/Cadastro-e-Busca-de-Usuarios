@@ -12,6 +12,7 @@ public interface UsuarioRepository extends JpaRepository<User, Integer> {
             String senha,
             String nome
     );
+    Optional<User> findByEmail(String email);
 
     @Transactional
     void deleteByEmail(String emal);
