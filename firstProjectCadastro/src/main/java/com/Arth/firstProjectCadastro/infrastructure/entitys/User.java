@@ -4,6 +4,8 @@ package com.Arth.firstProjectCadastro.infrastructure.entitys;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Table(name = "Usuario")
 @Entity()
 @Builder
@@ -28,4 +30,5 @@ public class User {
     private String senha;
 
     private Integer codigoRecuperacao;
+    private LocalDateTime codExpiracao;
 }

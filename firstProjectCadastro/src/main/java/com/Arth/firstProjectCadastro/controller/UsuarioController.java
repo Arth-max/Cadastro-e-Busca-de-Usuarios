@@ -1,7 +1,10 @@
 package com.Arth.firstProjectCadastro.controller;
 
 import com.Arth.firstProjectCadastro.business.UsuarioService;
+import com.Arth.firstProjectCadastro.infrastructure.entitys.NewSenhaDTO;
 import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
+import com.Arth.firstProjectCadastro.infrastructure.entitys.LoginDTO;
+import com.Arth.firstProjectCadastro.infrastructure.entitys.UsuarioResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,12 @@ public class UsuarioController {
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioResponseDTO> login(@RequestBody LoginDTO login) {
+        User usuario = usuarioService.login(login.email(), login.senha());
+        return ResponseEntity.ok(new UsuarioResponseDTO(usuario));
+    }
+
     @PostMapping("/recuperar-senha")
     public ResponseEntity<Void> recuperarSenhaEmail(@RequestParam String email) {
         usuarioService.recuperarSenhaEmail(email);
@@ -32,16 +41,9 @@ public class UsuarioController {
     }
 
     @PutMapping("/atualizarSenha")
-    public ResponseEntity<Void> atualizarSenha(@RequestParam String email, int cod, @RequestBody User usuario) {
-        usuarioService.atualizarSenha(email, cod, usuario);
+    public ResponseEntity<Void> atualizarSenha(@RequestParam String email, @RequestParam int cod, @RequestBody NewSenhaDTO novaSenha) {
+        usuarioService.atualizarSenha(email, cod, novaSenha.senha());
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<User> buscarUsuario(@RequestParam String email, String senha, String nome) {
-        User usuario = usuarioService.buscarUsuario(email, senha, nome);
-
-        return ResponseEntity.ok(usuario);
     }
 
     @DeleteMapping
