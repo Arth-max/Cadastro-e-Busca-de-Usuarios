@@ -1,13 +1,17 @@
 import Trash from '../../assets/trash.png'
 import ImgLogin from '../../assets/Imglogin.jpg'
+import verSenha from '../../assets/verSenha.png'
+import desverSenha from '../../assets/desverSenha.png'
 import './style.css'
 import { useState, useRef, useEffect } from 'react'
 import API from '../../hooks/user.js'
-import { setEmail } from '../../hooks/user'
+import { setEmail, closeInputs, anotherWindow } from '../../hooks/user'
 
 function Home() {
   const [users, setUsuario] = useState([]) //estado do usuário
-  const [tela, setTela] = useState('login')
+  const [tela, setTela] = useState('login') //estado da tela (login, cadastro, esqueciSenha)
+  const [VerSenha, setMostrarSenha] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   //login
   const inputName = useRef()
@@ -38,6 +42,10 @@ function Home() {
     setTela('esqueciSenha')
   }
 
+  function mostrarSenha() {
+      setMostrarSenha(!VerSenha)
+  }
+
   //função buscar usuários pela API
   async function findUsers() {
     try {
@@ -56,6 +64,8 @@ function Home() {
       inputName.current.value = ''
       inputEmail.current.value = ''
       inputSenha.current.value = ''
+
+      anotherWindow()
     } catch (error) {
         alert("Por favor, revise se todos os campos estão corretos\n" + error)
     }
@@ -63,6 +73,7 @@ function Home() {
 
   //função criar usuários pela API
   async function createUsers() {
+    setLoading(true)
     try {
       if (CinputName.current.value === "" || CinputEmail.current.value === "" || CinputSenha.current.value === "") {
         alert("Usuário nao cadastrado, Por favor digite todos os campos")
@@ -73,18 +84,19 @@ function Home() {
           email: CinputEmail.current.value,
           senha: CinputSenha.current.value
         })
-        alert("Usuário cadastrado com sucesso! Foi enviado um email para o senhor")
+        document.getElementById('msgCadastro').textContent = "Usuário cadastrado com sucesso!"
 
         CinputName.current.value = ''
         CinputEmail.current.value = ''
         CinputSenha.current.value = ''
+        setLoading(false)
       }
     } catch (error) {
         alert("Usuário nao cadastrado" + error)
     }
   }
   
-  //função atualizar usuários pela API
+  //função atualizar senha dos usuários pela API
   async function updatePassUsers() {
     const email = Email.current.value
     const cod = codigo.current.value
@@ -96,7 +108,8 @@ function Home() {
     }
     try {
       if (Nsenha == "") { // verifica se o inputSenha não está vazio
-        alert("Por favor digite uma nova senha para continuar")
+        document.getElementById('msgEsqueciSenha').textContent = "Por favor digite uma nova senha para continuar"
+        return
       } 
 
       await API.put(`/usuario/atualizarSenha?email=${email}&cod=${cod}`, {senha: Nsenha})
@@ -104,8 +117,8 @@ function Home() {
       Email.current.value = ''
       codigo.current.value = ''
       NinputSenha.current.value = ''
-
-      alert("Usuário atualizado com sucesso!")
+      closeInputs()
+      document.getElementById('msgEsqueciSenha').textContent = "Usuário atualizado com sucesso!"
 
     } catch (error) {
         console.log("Não foi possível atualziar o usuário" + error)
@@ -132,52 +145,59 @@ function Home() {
 
   return (
     <div className='App' style={{backgroundImage: `url(${ImgLogin})`}}>
-      
+      {/* Botões de cadastro e Login */}
       <div className='botoes'>
           <button className='botoesPrincipais' onClick={telaLogin}>Fazer Login</button>
-          <br/>
           <button className='botoesPrincipais' onClick={telaCadastro}>Criar Conta</button>
         </div>
 
-      <form className='form1' style={{display: tela === 'login' ? 'flex' : 'none'}}>
+      {/* Tela Login */}
+      <form className='login' style={{display: tela === 'login' ? 'flex' : 'none'}}>
         <h1>Login</h1>
         <input name="name" type="text" placeholder='Nome' ref={inputName}/>
         <input name="Email" type="email" placeholder='Email' ref={inputEmail}/>
-        <input name="senha" type="password" placeholder='Senha' ref={inputSenha}/>
+
+        <div className='senhas'>
+        <input name="senha" type={VerSenha ? 'text' : 'password'} placeholder='Senha' ref={inputSenha}/>
+        <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
+        </div>
+
         <button type="button" onClick={findUsers}>Entrar</button>
         <button type="button" onClick={forgotPassword}>Esqueci minha senha</button>
-        <a href="../src/tela.html">Esqueci minha senha</a>
+        <p id="msgLogin"></p>
       </form>
 
-      <form className='form2' style={{display: tela === 'cadastro' ? 'flex' : 'none'}}> 
+      {/* Tela Cadastro */}
+      <form className='cadastro' style={{display: tela === 'cadastro' ? 'flex' : 'none'}}> 
         <h1>Cadastro</h1>
         <input name="name" type="text" placeholder='Nome' ref={CinputName}/>
         <input name="Email" type="email" placeholder='Email' ref={CinputEmail}/>
-        <input name="senha" type="password" placeholder='Senha' ref={CinputSenha}/>
+       
+        <div className='senhas'>
+        <input name="senha" type={VerSenha ? 'text' : 'password'} placeholder='Senha' ref={CinputSenha}/>
+        <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
+        </div>
         <button type="button" onClick={createUsers}>Cadastrar</button>
+        <p id="msgCadastro"></p>
       </form>
 
-      <form className='form1' style={{display: tela === 'esqueciSenha' ? 'flex' : 'none'}}> 
+      {/* Tela Esqueci Senha */}
+      <form className='forgotPass' style={{display: tela === 'esqueciSenha' ? 'flex' : 'none'}}> 
         <h1>Redefinir senha</h1>
         <input id='mail' name="Email" type="email" placeholder='Digite seu Email' ref={Email}/>
         <input id='codigo' className='beforeCodigo' type="number" placeholder='Digite o código enviado pelo email' ref={codigo}/>
-        <input id='Nsenha' className='afterCodigo' type="password" placeholder='Digite sua nova senha' ref={NinputSenha}/>
-        <button type="button" onClick={setEmail}>Enviar</button>
-        <button type="button" onClick={updatePassUsers}>Atualizar Senha</button>
-        <button type="button" onClick={telaLogin}>Voltar</button>
-      </form>
 
-      {users?.map(user => (
-        <div onClick={RmvCardUser} key={user.id} className='cards'>
-          <div>
-            <p>Nome: <span>{user.nome}</span></p>
-            <p>Email: <span>{user.email}</span></p>
-          </div>
-          <button onClick={() => deleteUsers(user.email)}>
-            <img src={Trash} width={30} height={30}/>
-          </button>
+      {/* Div para criar nova senha */}
+        <div id="pass" className='senhasBC'>
+        <input id='Nsenha' type={VerSenha ? 'text' : 'password'} placeholder='Digite sua nova senha' ref={NinputSenha}/>
+        <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
         </div>
-      ))};
+        
+        <button type="button" onClick={setEmail}>Enviar</button>
+        <button id="UpPass" className='beforeCodigo' type="button" onClick={updatePassUsers}>Atualizar Senha</button>
+        <button type="button" onClick={telaLogin}>Voltar</button>
+        <p id="msgEsqueciSenha" style={{color: 'seagreen'}}></p>
+      </form>
     </div>
   )
 }

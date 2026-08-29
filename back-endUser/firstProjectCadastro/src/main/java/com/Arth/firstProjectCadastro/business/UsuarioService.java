@@ -1,18 +1,16 @@
 package com.Arth.firstProjectCadastro.business;
 
+import java.util.Random;
+
 import org.springframework.stereotype.Service;
 
 import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
 import com.Arth.firstProjectCadastro.infrastructure.repository.UsuarioRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.Random;
 
 
 @Service
 public class UsuarioService {
     private final UsuarioRepository repository;
-    private int Codigo;
     private final emailService EmailService;
 
     public UsuarioService(UsuarioRepository repository, emailService EmailService) {
@@ -37,7 +35,7 @@ public class UsuarioService {
         int cod = new Random().nextInt(900000) + 100000;
         usuario.setCodigoRecuperacao(cod);
         repository.saveAndFlush(usuario);
-        EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + Codigo + "\nDigite este código no site para continuar operação");
+        EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + usuario.getCodigoRecuperacao() + "\nDigite este código no site para continuar operação");
     }
 
     public void deletarUsuarioPorEmail(String email) {
