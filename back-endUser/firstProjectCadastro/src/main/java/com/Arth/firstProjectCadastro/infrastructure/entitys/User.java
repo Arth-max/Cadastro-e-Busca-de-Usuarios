@@ -1,6 +1,8 @@
 package com.Arth.firstProjectCadastro.infrastructure.entitys;
 
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,5 +38,6 @@ public class User {
     @Column(name = "senha")
     private String senha;
 
-    private Integer CodigoRecuperacao;
+    private Integer codigoRecuperacao;
+    private LocalDateTime codExpiracao;
 }
