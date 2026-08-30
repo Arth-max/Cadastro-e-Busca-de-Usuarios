@@ -30,7 +30,7 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<UsuarioResponseDTO> login(@RequestBody LoginDTO login) {
-        User usuario = usuarioService.login(login.email(), login.senha());
+        User usuario = usuarioService.login(login.nome(), login.email(), login.senha());
         return ResponseEntity.ok(new UsuarioResponseDTO(usuario));
     }
 

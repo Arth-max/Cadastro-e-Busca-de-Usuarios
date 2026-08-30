@@ -30,8 +30,8 @@ public class UsuarioService {
         repository.saveAndFlush(usuario);
     }
 
-    public User login(String email, String senha) {
-        User usuario = repository.findByEmail(email).orElseThrow(
+    public User login(String nome, String email, String senha) {
+        User usuario = repository.findByEmailAndNome(nome, email).orElseThrow(
                 () -> new RuntimeException("Usuario não encontrado"));
 
         if (!encoder.matches(senha, usuario.getSenha())) {

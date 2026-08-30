@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByEmailAndSenhaAndNome (
+    Optional<User> findByEmailAndNome (
             String email,
-            String senha,
             String nome
     );
     Optional<User> findByEmail(String email);
