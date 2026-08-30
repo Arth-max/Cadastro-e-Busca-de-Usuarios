@@ -51,10 +51,6 @@ public class UsuarioService {
         EmailService.enviarEmail(email, "Recuperação de senha", "Seu código é: " + usuario.getCodigoRecuperacao() + "\nDigite este código no site para continuar operação");
     }
 
-    public void deletarUsuarioPorEmail(String email) {
-        repository.deleteByEmail(email);
-    }
-
     public void atualizarSenha(String email, int cod, String novaSenha) {
         User usuarioEntity = repository.findByEmail(email).orElseThrow(
                     () -> new RuntimeException("Usuario não encontrado")
@@ -82,5 +78,9 @@ public class UsuarioService {
         if (usuario.getEmail() != null) { usuarioEntity.setEmail(usuario.getEmail()); }
         if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) { usuarioEntity.setSenha(encoder.encode(usuario.getSenha())); }
         repository.saveAndFlush(usuarioEntity);
+    }
+
+    public void deletarUsuarioPorEmail(String email) {
+        repository.deleteByEmail(email);
     }
 }

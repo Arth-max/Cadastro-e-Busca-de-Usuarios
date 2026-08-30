@@ -6,8 +6,8 @@ import jakarta.transaction.Transactional;
 
 public interface UsuarioRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmailAndNome (
-            String email,
-            String nome
+            String nome,
+            String email
     );
     Optional<User> findByEmail(String email);
 
