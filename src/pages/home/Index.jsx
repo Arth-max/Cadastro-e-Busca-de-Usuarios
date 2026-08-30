@@ -4,13 +4,15 @@ import desverSenha from '../../assets/desverSenha.png'
 import './style.css'
 import { useState, useRef, useEffect } from 'react'
 import API from '../../hooks/user.js'
-import { setEmail, closeInputs, anotherWindow } from '../../hooks/user'
+import { useNavigate } from 'react-router-dom'
+import { closeInputs } from '../../hooks/user'
 
 function Home() {
   const [users, setUsuario] = useState([]) //estado do usuário
   const [tela, setTela] = useState('login') //estado da tela (login, cadastro, esqueciSenha)
   const [VerSenha, setMostrarSenha] = useState(false)
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   //login
   const inputName = useRef()
@@ -31,14 +33,19 @@ function Home() {
   //ativar tela login
   function telaLogin() {
     setTela('login')
+    document.getElementById('msgEsqueciSenha').textContent = ""
+    document.getElementById('msgCadastro').textContent = ""
   }
   //ativar tela cadastro
   function telaCadastro() {
     setTela('cadastro')
+    document.getElementById('msgLogin').textContent = ""
   }
   //ativar tela esqueci senha
   function forgotPassword() {
     setTela('esqueciSenha')
+    document.getElementById('msgLogin').textContent = ""
+    document.getElementById('msgCadastro').textContent = ""
   }
 
   function mostrarSenha() {
@@ -51,6 +58,7 @@ function Home() {
       && /[!@#$%^&*()\-_=+[{\]}|;:'"<>.,/?~]/.test(senha)
     )
   }
+
   //função buscar usuários pela API
   async function findUsers() {
     try {
@@ -68,15 +76,18 @@ function Home() {
         email: email,
         senha: senha
       })
-      alert("validado com sucesso")
+
+      document.getElementById('msgLogin').style.color = 'seagreen'
+      document.getElementById('msgLogin').textContent = "validado com sucesso"
 
       inputName.current.value = ''
       inputEmail.current.value = ''
       inputSenha.current.value = ''
 
-      anotherWindow()
+      navigate('/tela')
     } catch (error) {
-      alert("Por favor, revise se todos os campos estão corretos\n" + error)
+      document.getElementById('msgLogin').style.color = 'darkred'
+      document.getElementById('msgLogin').textContent = "Por favor, revise se todos os campos estão corretos\n" + error
     }
   }
 
@@ -115,11 +126,39 @@ function Home() {
       setLoading(false)
     }
   }
+
+  async function setEmail() {
+    setLoading(true)
+    const email = Email.current.value;
+    if (email === '') {
+        document.getElementById('msgEsqueciSenha').textContent = "Por favor digite um email"
+        setLoading(false)
+        return
+    }
+    setLoading(true)
+    try {
+        await API.post('/usuario/recuperar-senha?email=' + email)
+        document.getElementById('codigo').style.display = 'block'
+        document.getElementById('Nsenha').style.display = 'block'
+        document.getElementById('UpPass').style.display = 'block'
+        document.getElementById('pass').style.display = 'flex'
+
+        document.getElementById('msgEsqueciSenha').style.color = 'seagreen'
+        document.getElementById('msgEsqueciSenha').textContent = "Um codigo foi enviado para o seu email"
+    } catch (error) {
+        document.getElementById('msgEsqueciSenha').style.color = 'darkred'
+        document.getElementById('msgEsqueciSenha').textContent = "email inválido"
+    } finally {
+        setLoading(false)
+    }
+  }
+
   //função atualizar senha dos usuários pela API
   async function updatePassUsers() {
     const email = Email.current.value
     const cod = codigo.current.value
     const Nsenha = NinputSenha.current.value
+    setLoading(true)
 
     if (cod === '') {
       console.log("Usuário nao atualizado, Por favor digite o codigo")
@@ -143,10 +182,13 @@ function Home() {
       Email.current.value = ''
       codigo.current.value = ''
       NinputSenha.current.value = ''
+
       closeInputs()
+      document.getElementById('msgEsqueciSenha').style.color = 'seagreen'
       document.getElementById('msgEsqueciSenha').textContent = "Usuário atualizado com sucesso!"
     } catch (error) {
-      console.log("Não foi possível atualziar o usuário" + error)
+      document.getElementById('msgEsqueciSenha').style.color = 'darkred'
+      document.getElementById('msgEsqueciSenha').textContent = ("Não foi possível atualizar o usuário" + error)
     } finally {
       setLoading(false)
     }
@@ -204,14 +246,14 @@ function Home() {
           <input name="senha" type={VerSenha ? 'text' : 'password'} placeholder='Senha' ref={CinputSenha} />
           <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
         </div>
-        <button type="button" onClick={createUsers}>Cadastrar</button>
+        <button type="button" onClick={createUsers} disabled={loading}>{loading ? 'Cadastrando...' : 'Cadastrar'}</button>
         <p id="msgCadastro"></p>
       </form>
 
       {/* Tela Esqueci Senha */}
       <form className='forgotPass' style={{ display: tela === 'esqueciSenha' ? 'flex' : 'none' }}>
         <h1>Redefinir senha</h1>
-        <input id='mail' name="Email" type="email" placeholder='Digite seu Email' ref={Email} />
+        <input name="Email" type="email" placeholder='Digite seu Email' ref={Email} />
         <input id='codigo' className='beforeCodigo' type="number" placeholder='Digite o código enviado pelo email' ref={codigo} />
 
         {/* Div para criar nova senha */}
@@ -220,8 +262,8 @@ function Home() {
           <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
         </div>
 
-        <button type="button" onClick={setEmail}>Enviar</button>
-        <button id="UpPass" className='beforeCodigo' type="button" onClick={updatePassUsers}>Atualizar Senha</button>
+        <button type="button" onClick={setEmail} disabled={loading}>{loading ? 'Enviando...' : 'Enviar'}</button>
+        <button id="UpPass" className='beforeCodigo' type="button" onClick={updatePassUsers} disabled={loading}>{loading ? 'Alterando...' : 'Alterar Senha'}</button>
         <button type="button" onClick={telaLogin}>Voltar</button>
         <p id="msgEsqueciSenha" style={{ color: 'seagreen' }}></p>
       </form>
