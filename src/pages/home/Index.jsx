@@ -34,6 +34,7 @@ function Home() {
     setTela('login')
     document.getElementById('msgEsqueciSenha').textContent = ""
     document.getElementById('msgCadastro').textContent = ""
+    document.getElementById('EnvEmail').style.display = 'block'
   }
   //ativar tela cadastro
   function telaCadastro() {
@@ -142,6 +143,7 @@ function Home() {
     setLoading(true)
     try {
         await API.post('/usuario/recuperar-senha?email=' + email)
+        document.getElementById('EnvEmail').style.display = 'none'
         document.getElementById('codigo').style.display = 'block'
         document.getElementById('Nsenha').style.display = 'block'
         document.getElementById('UpPass').style.display = 'block'
@@ -265,7 +267,7 @@ function Home() {
           <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
         </div>
 
-        <button type="button" onClick={setEmail} disabled={loading}>{loading ? 'Enviando...' : 'Enviar'}</button>
+        <button id="EnvEmail" type="button" onClick={setEmail} disabled={loading}>{loading ? 'Enviando...' : 'Enviar'}</button>
         <button id="UpPass" className='beforeCodigo' type="button" onClick={updatePassUsers} disabled={loading}>{loading ? 'Alterando...' : 'Alterar Senha'}</button>
         <button type="button" onClick={telaLogin}>Voltar</button>
         <p id="msgEsqueciSenha" style={{ color: 'seagreen' }}></p>
