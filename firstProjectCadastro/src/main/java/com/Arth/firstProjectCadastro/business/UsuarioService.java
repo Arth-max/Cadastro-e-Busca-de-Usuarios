@@ -30,8 +30,8 @@ public class UsuarioService {
         repository.saveAndFlush(usuario);
     }
 
-    public User login(String nome, String email, String senha) {
-        User usuario = repository.findByEmailAndNome(nome, email).orElseThrow(
+    public User login(String nome, String senha) {
+        User usuario = repository.findByNome(nome).orElseThrow(
                 () -> new RuntimeException("Usuario não encontrado"));
 
         if (!encoder.matches(senha, usuario.getSenha())) {
@@ -55,19 +55,26 @@ public class UsuarioService {
         User usuarioEntity = repository.findByEmail(email).orElseThrow(
                     () -> new RuntimeException("Usuario não encontrado")
         );
-        if (usuarioEntity.getCodigoRecuperacao() != null && usuarioEntity.getCodigoRecuperacao().equals(cod)) {
-            if (novaSenha == null || novaSenha.isBlank()) {
-                throw new RuntimeException("A senha não pode ser vazia");
-            }
+        if (usuarioEntity.getCodigoRecuperacao() == null || usuarioEntity.getCodExpiracao() == null) {
+            throw new RuntimeException("Código inexistente, por favor digite o código");
+        }
+        if (LocalDateTime.now().isBefore(usuarioEntity.getCodExpiracao())) {
+            usuarioEntity.setCodigoRecuperacao(null);
+            usuarioEntity.setCodExpiracao(null);
+            repository.saveAndFlush(usuarioEntity);
+
+            throw new RuntimeException("Código expirado");
+        }
+        if (!usuarioEntity.getCodigoRecuperacao().equals(cod)) {
+            throw new RuntimeException("Código inválido");
+        }
+        if (novaSenha == null || novaSenha.isBlank()) {
+            throw new RuntimeException("A senha não pode ser vazia");
+        }
             usuarioEntity.setSenha(encoder.encode(novaSenha));
             usuarioEntity.setCodigoRecuperacao(null);
             usuarioEntity.setCodExpiracao(null);
             repository.saveAndFlush(usuarioEntity);
-        } else if (LocalDateTime.now().isAfter(usuarioEntity.getCodExpiracao())) {
-            throw new RuntimeException("Código expirado");
-        } else {
-            throw new RuntimeException("Código inválido");
-        }
     }
 
     public void atualizarUsuario(String email, User usuario) {
