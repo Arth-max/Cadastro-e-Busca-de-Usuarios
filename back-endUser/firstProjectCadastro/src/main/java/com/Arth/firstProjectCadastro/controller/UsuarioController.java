@@ -30,8 +30,12 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<UsuarioResponseDTO> login(@RequestBody LoginDTO login) {
-        User usuario = usuarioService.login(login.nome(), login.email(), login.senha());
-        return ResponseEntity.ok(new UsuarioResponseDTO(usuario));
+        try {
+            User usuario = usuarioService.login(login.nome(), login.senha());
+            return ResponseEntity.ok(new UsuarioResponseDTO(usuario));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).build();
+        }
     }
 
     @PostMapping("/recuperar-senha")

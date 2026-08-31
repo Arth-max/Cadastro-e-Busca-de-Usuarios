@@ -5,10 +5,7 @@ import com.Arth.firstProjectCadastro.infrastructure.entitys.User;
 import jakarta.transaction.Transactional;
 
 public interface UsuarioRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByEmailAndNome (
-            String nome,
-            String email
-    );
+    Optional<User> findByNome (String nome);
     Optional<User> findByEmail(String email);
 
     @Transactional
