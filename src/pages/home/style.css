@@ -100,6 +100,42 @@
   transition: 0.2s ease;
 }
 
+.principal {
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  margin-top: 10px;
+} 
+
+.cards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  animation: appear 0.5s ease-in-out;
+}
+.card {
+  min-height: 180px;
+  padding: 25px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background: rgba(20, 20, 20, 0.45);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-8px);
+  background: rgba(30, 30, 30, 0.6);
+  border-color: rgba(46, 139, 87, 0.5);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+}
+
 .login, .cadastro, .forgotPass {
   display: flex;
   flex-direction: column;
@@ -137,31 +173,6 @@
 .login > button:hover, .cadastro > button:hover, .forgotPass > button:hover {
   transform: translateY(-5px);
   filter: brightness(1.1);
-}
-
-nav {
-    display: flex;
-    width: 97%;
-    height: 60px;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    color: #fff;
-    margin: 0 auto;
-    padding: 10px 20px;
-    border-radius: 30px;
-
-  & button {
-    border: none;
-    font-weight: bolder;
-    font-size: 16px;
-    cursor: pointer;
-    color: black;
-    border-radius: 10px;
-    height: 30px;
-    width: 100px;
-  }
 }
 
 @keyframes appear {
@@ -222,6 +233,61 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+.logout {
+  width: 200px;
+  background: rgba(120, 30, 30, 0.6);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.logout:hover {
+  background: rgba(150, 30, 30, 0.8);
+  transform: translateY(-5px);
+}
+
+.configButton {
+   width: 45px;
+   height: 45px;
+   padding: 5px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: rgba(255, 255, 255, 0.08);
+   border: 1px solid rgba(255, 255, 255, 0.2);
+   border-radius: 30%;
+   transition: 0.3s ease;
+   cursor: pointer;
+}
+.configButton img {
+  width: 25px;
+  height: 25px;
+  margin: 0;
+}
+.configButton:hover {
+  transform: rotate(30deg) scale(1.05);
+}
+
+.cabecalho {
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 15px 25px;
+  border-radius: 15px;
+  background: rgba(20, 20, 20, 0.45);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: appear 0.4s ease-in-out;
+}
+.cabecalho h1 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
 }
 
 input {

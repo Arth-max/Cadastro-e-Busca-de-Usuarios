@@ -16,7 +16,6 @@ function Home() {
 
   //login
   const inputName = useRef()
-  const inputEmail = useRef()
   const inputSenha = useRef()
 
   //cadastro
@@ -61,19 +60,19 @@ function Home() {
 
   //função buscar usuários pela API
   async function findUsers() {
+    setLoading(true)
     try {
-      const email = inputEmail.current.value
       const nome = inputName.current.value
       const senha = inputSenha.current.value
 
-      if (email == '' || nome == '' || senha == '') {
+      if (nome == '' || senha == '') {
         alert("Usuário nao encontrado, Por favor digite todos os campos")
+        setLoading(false)
         return
       }
-
-      await API.post('/usuario/login', {
+      setLoading(true)
+      const response =await API.post('/usuario/login', {
         nome: nome,
-        email: email,
         senha: senha
       })
 
@@ -81,13 +80,18 @@ function Home() {
       document.getElementById('msgLogin').textContent = "validado com sucesso"
 
       inputName.current.value = ''
-      inputEmail.current.value = ''
       inputSenha.current.value = ''
 
-      navigate('/tela')
+      navigate('/tela', {
+        state: {
+          usuario: response.data
+        }
+      })
     } catch (error) {
       document.getElementById('msgLogin').style.color = 'darkred'
       document.getElementById('msgLogin').textContent = "Por favor, revise se todos os campos estão corretos\n" + error
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -202,7 +206,7 @@ function Home() {
 
       setUsuario(PrevUsers => PrevUsers.filter(user => user.email !== email))
 
-      inputEmail.current.value = ''
+      
     } catch (error) {
       console.log("Não foi possível deletar o usuário" + error)
     }
@@ -224,14 +228,13 @@ function Home() {
       <form className='login' style={{ display: tela === 'login' ? 'flex' : 'none' }}>
         <h1>Login</h1>
         <input name="name" type="text" placeholder='Nome' ref={inputName} />
-        <input name="Email" type="email" placeholder='Email' ref={inputEmail} />
 
         <div className='senhas'>
           <input name="senha" type={VerSenha ? 'text' : 'password'} placeholder='Senha' ref={inputSenha} />
           <button type="button" className='divSenhas' onClick={mostrarSenha}><img src={VerSenha ? desverSenha : verSenha} alt="" /></button>
         </div>
 
-        <button type="button" onClick={findUsers}>Entrar</button>
+        <button type="button" onClick={findUsers} disabled={loading}>{loading ? 'Entrando...' : 'Entrar'}</button>
         <button type="button" onClick={forgotPassword}>Esqueci minha senha</button>
         <p id="msgLogin"></p>
       </form>
