@@ -1,14 +1,13 @@
 import ImgLogin from '../../assets/Imglogin.jpg'
 import verSenha from '../../assets/verSenha.png'
 import desverSenha from '../../assets/desverSenha.png'
-import './style.css'
+import './index.css'
 import { useState, useRef, useEffect } from 'react'
 import API from '../../hooks/user.js'
 import { useNavigate } from 'react-router-dom'
 import { closeInputs } from '../../hooks/user'
 
 function Home() {
-  const [users, setUsuario] = useState([]) //estado do usuário
   const [tela, setTela] = useState('login') //estado da tela (login, cadastro, esqueciSenha)
   const [VerSenha, setMostrarSenha] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -27,7 +26,6 @@ function Home() {
   const codigo = useRef()
   const NinputSenha = useRef()
   const Email = useRef()
-  const NinputName = useRef()
 
   //ativar tela login
   function telaLogin() {
@@ -100,33 +98,40 @@ function Home() {
   async function createUsers() {
     setLoading(true)
     if (CinputName.current.value === "" || CinputEmail.current.value === "" || CinputSenha.current.value === "") {
-      alert("Usuário nao cadastrado, Por favor digite todos os campos")
+      document.getElementById('msgCadastro').style.color = 'darkred'
+      document.getElementById('msgCadastro').textContent = "Por favor digite todos os campos"
+      setLoading(false)
       return
     }
     if (CinputSenha.current.value.length < 8) {
+      document.getElementById('msgCadastro').style.color = 'darkred'
       document.getElementById('msgCadastro').textContent = "Senha inválida, com ao menos 8 caracteres"
+      setLoading(false)
       return
     }
     if (!validarSenha(CinputSenha.current.value)) {
+      document.getElementById('msgCadastro').style.color = 'darkred'
       document.getElementById('msgCadastro').textContent = "Senha inválida, por favor digite uma senha forte"
       setLoading(false)
       return
     }
     setLoading(true)
     try {
-      await API.post('/usuario', {
-        nome: CinputName.current.value,
-        email: CinputEmail.current.value,
-        senha: CinputSenha.current.value
-      })
-      document.getElementById('msgCadastro').textContent = "Usuário cadastrado com sucesso!"
+        await API.post('/usuario', {
+          nome: CinputName.current.value,
+          email: CinputEmail.current.value,
+          senha: CinputSenha.current.value
+        })
+        document.getElementById('msgCadastro').style.color = 'seagreen'
+        document.getElementById('msgCadastro').textContent = "Usuário cadastrado com sucesso!"
 
-      CinputName.current.value = ''
-      CinputEmail.current.value = ''
-      CinputSenha.current.value = ''
-      setLoading(false)
+        CinputName.current.value = ''
+        CinputEmail.current.value = ''
+        CinputSenha.current.value = ''
+        setLoading(false)
     } catch (error) {
-      alert("Usuário nao cadastrado" + error)
+        document.getElementById('msgCadastro').style.color = 'darkred'
+        document.getElementById('msgCadastro').textContent = "Usuário não cadastrado"
     } finally {
       setLoading(false)
     }
@@ -197,20 +202,6 @@ function Home() {
       document.getElementById('msgEsqueciSenha').textContent = ("Não foi possível atualizar o usuário" + error)
     } finally {
       setLoading(false)
-    }
-  }
-
-  //função deletar usuários pela API
-  async function deleteUsers(email) {
-    try {
-      await API.delete(`/usuario?email=${email}`)
-      console.log("Usuário deletado com sucesso!")
-
-      setUsuario(PrevUsers => PrevUsers.filter(user => user.email !== email))
-
-      
-    } catch (error) {
-      console.log("Não foi possível deletar o usuário" + error)
     }
   }
 
